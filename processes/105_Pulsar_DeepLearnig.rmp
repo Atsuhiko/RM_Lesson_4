@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.3.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.3.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="false" class="read_csv" compatibility="9.3.001" expanded="true" height="68" name="Read CSV" width="90" x="45" y="340">
+        <parameter key="csv_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\data\pulsar_stars_nominal.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+        <parameter key="data_management" value="auto"/>
+      </operator>
+      <operator activated="false" class="set_role" compatibility="9.3.001" expanded="true" height="82" name="Set Role" width="90" x="179" y="340">
+        <parameter key="attribute_name" value="target_class"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve Pulsar_data" width="90" x="45" y="85">
+        <parameter key="repository_entry" value="../data/Pulsar_data"/>
+      </operator>
+      <operator activated="true" class="split_data" compatibility="9.3.001" expanded="true" height="103" name="Split Data" width="90" x="246" y="187">
+        <enumeration key="partitions">
+          <parameter key="ratio" value="0.7"/>
+          <parameter key="ratio" value="0.3"/>
+        </enumeration>
+        <parameter key="sampling_type" value="shuffled sampling"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="false" class="performance_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance" width="90" x="715" y="340">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <operator activated="true" class="deeplearning:dl4j_sequential_neural_network" compatibility="0.9.001" expanded="true" height="103" name="Deep Learning" origin="GENERATED_TUTORIAL" width="90" x="447" y="85">
+        <parameter key="loss_function" value="Multiclass Cross Entropy (Classification)"/>
+        <parameter key="epochs" value="100"/>
+        <parameter key="use_miniBatch" value="false"/>
+        <parameter key="batch_size" value="32"/>
+        <parameter key="updater" value="Adam"/>
+        <parameter key="learning_rate" value="0.01"/>
+        <parameter key="momentum" value="0.9"/>
+        <parameter key="rho" value="0.95"/>
+        <parameter key="epsilon" value="1.0E-6"/>
+        <parameter key="beta1" value="0.9"/>
+        <parameter key="beta2" value="0.999"/>
+        <parameter key="RMSdecay" value="0.95"/>
+        <parameter key="weight_initialization" value="Normal"/>
+        <parameter key="bias_initialization" value="0.0"/>
+        <parameter key="use_regularization" value="false"/>
+        <parameter key="l1_strength" value="0.1"/>
+        <parameter key="l2_strength" value="0.1"/>
+        <parameter key="optimization_method" value="Stochastic Gradient Descent"/>
+        <parameter key="backpropagation" value="Standard"/>
+        <parameter key="backpropagation_length" value="50"/>
+        <parameter key="infer_input_shape" value="true"/>
+        <parameter key="network_type" value="Simple Neural Network"/>
+        <parameter key="log_each_epoch" value="true"/>
+        <parameter key="epochs_per_log" value="10"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <process expanded="true">
+          <operator activated="true" class="deeplearning:dl4j_dense_layer" compatibility="0.9.001" expanded="true" height="68" name="Add Fully-Connected Layer" origin="GENERATED_TUTORIAL" width="90" x="112" y="85">
+            <parameter key="number_of_neurons" value="100"/>
+            <parameter key="activation_function" value="ReLU (Rectified Linear Unit)"/>
+            <parameter key="use_dropout" value="false"/>
+            <parameter key="dropout_rate" value="0.25"/>
+            <parameter key="overwrite_networks_weight_initialization" value="false"/>
+            <parameter key="weight_initialization" value="Normal"/>
+            <parameter key="overwrite_networks_bias_initialization" value="false"/>
+            <parameter key="bias_initialization" value="0.0"/>
+            <description align="center" color="transparent" colored="false" width="126">You can choose a number of neurons to decide how many internal attributes are created.</description>
+          </operator>
+          <operator activated="true" class="deeplearning:dl4j_dense_layer" compatibility="0.9.001" expanded="true" height="68" name="Add Fully-Connected Layer (2)" origin="GENERATED_TUTORIAL" width="90" x="313" y="85">
+            <parameter key="number_of_neurons" value="3"/>
+            <parameter key="activation_function" value="Softmax"/>
+            <parameter key="use_dropout" value="false"/>
+            <parameter key="dropout_rate" value="0.25"/>
+            <parameter key="overwrite_networks_weight_initialization" value="false"/>
+            <parameter key="weight_initialization" value="Normal"/>
+            <parameter key="overwrite_networks_bias_initialization" value="false"/>
+            <parameter key="bias_initialization" value="0.0"/>
+            <description align="center" color="transparent" colored="false" width="126">The last layer needs to be setup with an activation function, that fits the problem type.</description>
+          </operator>
+          <connect from_port="layerArchitecture" to_op="Add Fully-Connected Layer" to_port="layerArchitecture"/>
+          <connect from_op="Add Fully-Connected Layer" from_port="layerArchitecture" to_op="Add Fully-Connected Layer (2)" to_port="layerArchitecture"/>
+          <connect from_op="Add Fully-Connected Layer (2)" from_port="layerArchitecture" to_port="layerArchitecture"/>
+          <portSpacing port="source_layerArchitecture" spacing="0"/>
+          <portSpacing port="sink_layerArchitecture" spacing="0"/>
+          <description align="left" color="gray" colored="true" height="169" resized="false" width="277" x="462" y="130">Since we have a multi-class problem, we want probabilities for all possible class values. Therefore choose &amp;quot;softmax&amp;quot; as an activation function.&lt;br&gt;&lt;br&gt;The number of neurons of the last layer needs to reflect the number of possible class values. For iris, this is three.</description>
+          <description align="center" color="yellow" colored="true" height="254" resized="false" width="189" x="60" y="45">First Hidden Layer</description>
+          <description align="center" color="yellow" colored="false" height="254" resized="false" width="189" x="264" y="45">Output Layer</description>
+        </process>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="9.3.001" expanded="true" height="82" name="Apply Model" origin="GENERATED_TUTORIAL" width="90" x="581" y="187">
+        <list key="application_parameters"/>
+        <parameter key="create_view" value="false"/>
+      </operator>
+      <operator activated="true" class="performance_binominal_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance (2)" width="90" x="715" y="187">
+        <parameter key="manually_set_positive_class" value="false"/>
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="false"/>
+        <parameter key="kappa" value="false"/>
+        <parameter key="AUC (optimistic)" value="false"/>
+        <parameter key="AUC" value="false"/>
+        <parameter key="AUC (pessimistic)" value="false"/>
+        <parameter key="precision" value="false"/>
+        <parameter key="recall" value="false"/>
+        <parameter key="lift" value="false"/>
+        <parameter key="fallout" value="false"/>
+        <parameter key="f_measure" value="false"/>
+        <parameter key="false_positive" value="false"/>
+        <parameter key="false_negative" value="false"/>
+        <parameter key="true_positive" value="false"/>
+        <parameter key="true_negative" value="false"/>
+        <parameter key="sensitivity" value="false"/>
+        <parameter key="specificity" value="false"/>
+        <parameter key="youden" value="false"/>
+        <parameter key="positive_predictive_value" value="false"/>
+        <parameter key="negative_predictive_value" value="false"/>
+        <parameter key="psep" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (2)" width="90" x="849" y="238">
+        <parameter key="repository_entry" value="../results/SV_DeepLearning_Table"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store" width="90" x="849" y="136">
+        <parameter key="repository_entry" value="../results/SV_DeepLearning_Performance"/>
+      </operator>
+      <connect from_op="Read CSV" from_port="output" to_op="Set Role" to_port="example set input"/>
+      <connect from_op="Retrieve Pulsar_data" from_port="output" to_op="Split Data" to_port="example set"/>
+      <connect from_op="Split Data" from_port="partition 1" to_op="Deep Learning" to_port="training set"/>
+      <connect from_op="Split Data" from_port="partition 2" to_op="Apply Model" to_port="unlabelled data"/>
+      <connect from_op="Deep Learning" from_port="model" to_op="Apply Model" to_port="model"/>
+      <connect from_op="Apply Model" from_port="labelled data" to_op="Performance (2)" to_port="labelled data"/>
+      <connect from_op="Performance (2)" from_port="performance" to_op="Store" to_port="input"/>
+      <connect from_op="Performance (2)" from_port="example set" to_op="Store (2)" to_port="input"/>
+      <connect from_op="Store (2)" from_port="through" to_port="result 2"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+    </process>
+  </operator>
+</process>

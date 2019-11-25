@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.3.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.3.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_csv" compatibility="9.3.001" expanded="true" height="68" name="Read CSV" width="90" x="45" y="34">
+        <parameter key="csv_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\data\pulsar_stars_nominal.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+        <parameter key="data_management" value="auto"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.3.001" expanded="true" height="82" name="Set Role" width="90" x="45" y="187">
+        <parameter key="attribute_name" value="target_class"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="false" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve Pulsar_data" width="90" x="45" y="340">
+        <parameter key="repository_entry" value="../data/Pulsar_data"/>
+      </operator>
+      <operator activated="true" class="split_data" compatibility="9.3.001" expanded="true" height="103" name="Split Data" width="90" x="246" y="187">
+        <enumeration key="partitions">
+          <parameter key="ratio" value="0.7"/>
+          <parameter key="ratio" value="0.3"/>
+        </enumeration>
+        <parameter key="sampling_type" value="shuffled sampling"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="keras:sequential" compatibility="1.0.003" expanded="true" height="166" name="Keras Model" origin="GENERATED_SAMPLE" width="90" x="447" y="34">
+        <parameter key="input shape" value="(8,)"/>
+        <parameter key="loss" value="mean_squared_error"/>
+        <parameter key="optimizer" value="Adam"/>
+        <parameter key="learning rate" value="0.001"/>
+        <parameter key="momentum" value="0.0"/>
+        <parameter key="rho" value="0.9"/>
+        <parameter key="beta 1" value="0.999"/>
+        <parameter key="beta 2" value="0.999"/>
+        <parameter key="epsilon" value="1.0E-8"/>
+        <parameter key="decay" value="0.0"/>
+        <parameter key="schedule decay" value="0.004"/>
+        <parameter key="Nesterov" value="false"/>
+        <parameter key="use metric" value="false"/>
+        <enumeration key="metric"/>
+        <parameter key="epochs" value="1024"/>
+        <parameter key="batch size" value="32"/>
+        <enumeration key="callbacks">
+          <parameter key="callbacks" value="TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None)"/>
+        </enumeration>
+        <parameter key="verbose" value="1"/>
+        <parameter key="validation split" value="0.0"/>
+        <parameter key="shuffle" value="false"/>
+        <parameter key="fix seed" value="false"/>
+        <parameter key="random seed" value="0"/>
+        <process expanded="true">
+          <operator activated="true" class="keras:core_layer" compatibility="1.0.003" expanded="true" height="82" name="Add Core Layer" origin="GENERATED_SAMPLE" width="90" x="380" y="238">
+            <parameter key="layer_type" value="Dense"/>
+            <parameter key="no_units" value="20"/>
+            <parameter key="activation_function" value="'relu'"/>
+            <parameter key="use_bias" value="true"/>
+            <parameter key="kernel_initializer" value="RandomNormal(mean=0.0, stddev=0.05, seed=None)"/>
+            <parameter key="bias_initializer" value="Zeros()"/>
+            <parameter key="kernel_regularizer" value="None"/>
+            <parameter key="bias_regularizer" value="None"/>
+            <parameter key="activity_regularizer" value="None"/>
+            <parameter key="kernel_constraint" value="None"/>
+            <parameter key="bias_constraint" value="None"/>
+            <parameter key="rate" value="0.1"/>
+            <parameter key="noise_shape" value="None"/>
+            <parameter key="seed" value="None"/>
+            <parameter key="target_shape" value="1.1"/>
+            <parameter key="dims" value="1.1"/>
+            <parameter key="repetition_factor" value="2"/>
+            <parameter key="function" value="None"/>
+            <parameter key="l1" value="0.0"/>
+            <parameter key="l2" value="0.0"/>
+            <parameter key="mask_value" value="0.0"/>
+          </operator>
+          <operator activated="true" class="keras:core_layer" compatibility="1.0.003" expanded="true" height="82" name="Add Core Layer (2)" origin="GENERATED_SAMPLE" width="90" x="514" y="238">
+            <parameter key="layer_type" value="Dense"/>
+            <parameter key="no_units" value="1"/>
+            <parameter key="activation_function" value="None"/>
+            <parameter key="use_bias" value="true"/>
+            <parameter key="kernel_initializer" value="RandomNormal(mean=0.0, stddev=0.05, seed=None)"/>
+            <parameter key="bias_initializer" value="Zeros()"/>
+            <parameter key="kernel_regularizer" value="None"/>
+            <parameter key="bias_regularizer" value="None"/>
+            <parameter key="activity_regularizer" value="None"/>
+            <parameter key="kernel_constraint" value="None"/>
+            <parameter key="bias_constraint" value="None"/>
+            <parameter key="rate" value="0.1"/>
+            <parameter key="noise_shape" value="None"/>
+            <parameter key="seed" value="None"/>
+            <parameter key="target_shape" value="1.1"/>
+            <parameter key="dims" value="1.1"/>
+            <parameter key="repetition_factor" value="2"/>
+            <parameter key="function" value="None"/>
+            <parameter key="l1" value="0.0"/>
+            <parameter key="l2" value="0.0"/>
+            <parameter key="mask_value" value="0.0"/>
+          </operator>
+          <connect from_op="Add Core Layer" from_port="layers 1" to_op="Add Core Layer (2)" to_port="layers"/>
+          <connect from_op="Add Core Layer (2)" from_port="layers 1" to_port="layers 1"/>
+          <portSpacing port="sink_layers 1" spacing="0"/>
+          <portSpacing port="sink_layers 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="keras:apply" compatibility="1.0.003" expanded="true" height="82" name="Apply Keras Model" origin="GENERATED_SAMPLE" width="90" x="581" y="85">
+        <parameter key="batch_size" value="10"/>
+        <parameter key="verbose" value="0"/>
+      </operator>
+      <operator activated="true" class="performance_binominal_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance (2)" width="90" x="715" y="187">
+        <parameter key="manually_set_positive_class" value="false"/>
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="false"/>
+        <parameter key="kappa" value="false"/>
+        <parameter key="AUC (optimistic)" value="false"/>
+        <parameter key="AUC" value="false"/>
+        <parameter key="AUC (pessimistic)" value="false"/>
+        <parameter key="precision" value="false"/>
+        <parameter key="recall" value="false"/>
+        <parameter key="lift" value="false"/>
+        <parameter key="fallout" value="false"/>
+        <parameter key="f_measure" value="false"/>
+        <parameter key="false_positive" value="false"/>
+        <parameter key="false_negative" value="false"/>
+        <parameter key="true_positive" value="false"/>
+        <parameter key="true_negative" value="false"/>
+        <parameter key="sensitivity" value="false"/>
+        <parameter key="specificity" value="false"/>
+        <parameter key="youden" value="false"/>
+        <parameter key="positive_predictive_value" value="false"/>
+        <parameter key="negative_predictive_value" value="false"/>
+        <parameter key="psep" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <operator activated="false" class="performance_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance" width="90" x="715" y="340">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (2)" width="90" x="849" y="238">
+        <parameter key="repository_entry" value="../results/SV_Keras_Table"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store" width="90" x="849" y="136">
+        <parameter key="repository_entry" value="../results/SV_Keras_Performance"/>
+      </operator>
+      <connect from_op="Read CSV" from_port="output" to_op="Set Role" to_port="example set input"/>
+      <connect from_op="Set Role" from_port="example set output" to_op="Split Data" to_port="example set"/>
+      <connect from_op="Split Data" from_port="partition 1" to_op="Keras Model" to_port="training set"/>
+      <connect from_op="Split Data" from_port="partition 2" to_op="Apply Keras Model" to_port="unlabelled data"/>
+      <connect from_op="Keras Model" from_port="model" to_op="Apply Keras Model" to_port="model"/>
+      <connect from_op="Apply Keras Model" from_port="labelled data" to_op="Performance (2)" to_port="labelled data"/>
+      <connect from_op="Apply Keras Model" from_port="model" to_port="result 3"/>
+      <connect from_op="Performance (2)" from_port="performance" to_op="Store" to_port="input"/>
+      <connect from_op="Performance (2)" from_port="example set" to_op="Store (2)" to_port="input"/>
+      <connect from_op="Store (2)" from_port="through" to_port="result 2"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+    </process>
+  </operator>
+</process>

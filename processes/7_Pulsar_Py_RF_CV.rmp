@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.3.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.3.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve Pulsar_data" width="90" x="112" y="85">
+        <parameter key="repository_entry" value="../data/Pulsar_data"/>
+      </operator>
+      <operator activated="true" class="concurrency:cross_validation" compatibility="9.3.001" expanded="true" height="145" name="Cross Validation" width="90" x="514" y="85">
+        <parameter key="split_on_batch_attribute" value="false"/>
+        <parameter key="leave_one_out" value="false"/>
+        <parameter key="number_of_folds" value="5"/>
+        <parameter key="sampling_type" value="shuffled sampling"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <parameter key="enable_parallel_execution" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="python_scripting:execute_python" compatibility="9.3.000" expanded="true" height="103" name="Python RF" width="90" x="179" y="34">
+            <parameter key="script" value="import pandas&#10;&#10;# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;def rm_main(data):&#10;    print('Hello, world!')&#10;    # output can be found in Log View&#10;    print(type(data))&#10;&#10;    #your code goes here&#10;&#10;    #for example:&#10;    data2 = pandas.DataFrame([3,5,77,8])&#10;&#10;    # connect 2 output ports to see the results&#10;    return data, data2"/>
+            <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\Python_scripts\RF.ipynb"/>
+            <parameter key="notebook_cell_tag_filter" value=""/>
+            <parameter key="use_default_python" value="true"/>
+            <parameter key="package_manager" value="conda (anaconda)"/>
+          </operator>
+          <connect from_port="training set" to_op="Python RF" to_port="input 1"/>
+          <connect from_op="Python RF" from_port="output 1" to_port="model"/>
+          <portSpacing port="source_training set" spacing="0"/>
+          <portSpacing port="sink_model" spacing="0"/>
+          <portSpacing port="sink_through 1" spacing="0"/>
+        </process>
+        <process expanded="true">
+          <operator activated="true" class="python_scripting:execute_python" compatibility="9.3.000" expanded="true" height="124" name="Apply Py Model Binominal" width="90" x="179" y="34">
+            <parameter key="script" value="import pandas&#10;&#10;# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;def rm_main(data):&#10;    print('Hello, world!')&#10;    # output can be found in Log View&#10;    print(type(data))&#10;&#10;    #your code goes here&#10;&#10;    #for example:&#10;    data2 = pandas.DataFrame([3,5,77,8])&#10;&#10;    # connect 2 output ports to see the results&#10;    return data, data2"/>
+            <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\Python_scripts\Apply_Py_Model_Binominal.ipynb"/>
+            <parameter key="notebook_cell_tag_filter" value=""/>
+            <parameter key="use_default_python" value="true"/>
+            <parameter key="package_manager" value="conda (anaconda)"/>
+          </operator>
+          <operator activated="true" class="performance_binominal_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance" width="90" x="313" y="34">
+            <parameter key="manually_set_positive_class" value="false"/>
+            <parameter key="main_criterion" value="first"/>
+            <parameter key="accuracy" value="true"/>
+            <parameter key="classification_error" value="true"/>
+            <parameter key="kappa" value="true"/>
+            <parameter key="AUC (optimistic)" value="true"/>
+            <parameter key="AUC" value="true"/>
+            <parameter key="AUC (pessimistic)" value="false"/>
+            <parameter key="precision" value="true"/>
+            <parameter key="recall" value="true"/>
+            <parameter key="lift" value="true"/>
+            <parameter key="fallout" value="true"/>
+            <parameter key="f_measure" value="true"/>
+            <parameter key="false_positive" value="true"/>
+            <parameter key="false_negative" value="true"/>
+            <parameter key="true_positive" value="true"/>
+            <parameter key="true_negative" value="true"/>
+            <parameter key="sensitivity" value="true"/>
+            <parameter key="specificity" value="true"/>
+            <parameter key="youden" value="true"/>
+            <parameter key="positive_predictive_value" value="true"/>
+            <parameter key="negative_predictive_value" value="true"/>
+            <parameter key="psep" value="true"/>
+            <parameter key="skip_undefined_labels" value="true"/>
+            <parameter key="use_example_weights" value="true"/>
+          </operator>
+          <connect from_port="model" to_op="Apply Py Model Binominal" to_port="input 1"/>
+          <connect from_port="test set" to_op="Apply Py Model Binominal" to_port="input 2"/>
+          <connect from_op="Apply Py Model Binominal" from_port="output 1" to_op="Performance" to_port="labelled data"/>
+          <connect from_op="Performance" from_port="performance" to_port="performance 1"/>
+          <portSpacing port="source_model" spacing="0"/>
+          <portSpacing port="source_test set" spacing="0"/>
+          <portSpacing port="source_through 1" spacing="0"/>
+          <portSpacing port="sink_test set results" spacing="0"/>
+          <portSpacing port="sink_performance 1" spacing="0"/>
+          <portSpacing port="sink_performance 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store" width="90" x="782" y="136">
+        <parameter key="repository_entry" value="../results/CV_Py_RF_Performance"/>
+      </operator>
+      <connect from_op="Retrieve Pulsar_data" from_port="output" to_op="Cross Validation" to_port="example set"/>
+      <connect from_op="Cross Validation" from_port="performance 1" to_op="Store" to_port="input"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <description align="center" color="yellow" colored="false" height="69" resized="false" width="109" x="102" y="168">&amp;#31532;&amp;#65299;&amp;#22238;&amp;#12391;&amp;#20316;&amp;#25104;&amp;#12375;&amp;#12383;Pulsar_data&amp;#12434;&amp;#35501;&amp;#12415;&amp;#36796;&amp;#12416;</description>
+    </process>
+  </operator>
+</process>

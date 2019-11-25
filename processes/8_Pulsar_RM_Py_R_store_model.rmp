@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.3.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.3.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve Pulsar_data" width="90" x="112" y="238">
+        <parameter key="repository_entry" value="../data/Pulsar_data"/>
+      </operator>
+      <operator activated="true" class="split_data" compatibility="9.3.001" expanded="true" height="103" name="Split Data" width="90" x="246" y="238">
+        <enumeration key="partitions">
+          <parameter key="ratio" value="0.7"/>
+          <parameter key="ratio" value="0.3"/>
+        </enumeration>
+        <parameter key="sampling_type" value="automatic"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (4)" width="90" x="380" y="289">
+        <parameter key="repository_entry" value="../results/SV_0.3_data_for_RM_Py"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.3.001" expanded="true" height="103" name="Multiply" width="90" x="380" y="34"/>
+      <operator activated="true" class="python_scripting:execute_python" compatibility="9.3.000" expanded="true" height="103" name="Py_RF" width="90" x="581" y="187">
+        <parameter key="script" value="import pandas&#10;&#10;# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;def rm_main(data):&#10;    print('Hello, world!')&#10;    # output can be found in Log View&#10;    print(type(data))&#10;&#10;    #your code goes here&#10;&#10;    #for example:&#10;    data2 = pandas.DataFrame([3,5,77,8])&#10;&#10;    # connect 2 output ports to see the results&#10;    return data, data2"/>
+        <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\Python_scripts\RF.ipynb"/>
+        <parameter key="notebook_cell_tag_filter" value=""/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store" width="90" x="715" y="187">
+        <parameter key="repository_entry" value="//Local Repository/勉強会/４回目/results/SV_Py_RF_model"/>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="9.3.001" expanded="true" height="68" name="Read CSV" width="90" x="112" y="442">
+        <parameter key="csv_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\data\pulsar_stars_nominal.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+        <parameter key="data_management" value="auto"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.3.001" expanded="true" height="82" name="Set Role" width="90" x="246" y="442">
+        <parameter key="attribute_name" value="target_class"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="split_data" compatibility="9.3.001" expanded="true" height="103" name="Split Data (2)" width="90" x="380" y="442">
+        <enumeration key="partitions">
+          <parameter key="ratio" value="0.7"/>
+          <parameter key="ratio" value="0.3"/>
+        </enumeration>
+        <parameter key="sampling_type" value="automatic"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (5)" width="90" x="514" y="544">
+        <parameter key="repository_entry" value="../results/SV_0.3_data_for_R"/>
+      </operator>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="103" name="R_RF" origin="GENERATED_TUTORIAL" width="90" x="581" y="391">
+        <parameter key="script" value="# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;rm_main = function(data)&#10;{&#10;&#10;options(repos=&quot;https://cran.ism.ac.jp/&quot;) #install.packages()のダウンロード先指定&#10;install.packages(&quot;caret&quot;)&#10;install.packages(&quot;randomForest&quot;)&#10;library(caret)&#10;library(randomForest)&#10;&#10;# 交差検証10回 &#10;fitControl &lt;- trainControl(method = &quot;repeatedcv&quot;,&#10;                           number = 10,&#10;                           repeats = 10,&#10;                           selectionFunction = &quot;best&quot;) # repeated ten times&#10;&#10;# fit a random forest model (using rf/交差検証10回して最適化)&#10;rf_fit &lt;- train(as.factor(target_class) ~ ., #関数as.factor( )を使うことによって，因子型に変換&#10;                data = data, &#10;                method = &quot;rf&quot;,&#10;                trControl = fitControl)&#10;&#10;return(rf_fit)&#10;}"/>
+        <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\R_scripts\RF.r"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (2)" width="90" x="715" y="391">
+        <parameter key="repository_entry" value="../results/SV_R_RF_model"/>
+      </operator>
+      <operator activated="true" class="concurrency:parallel_random_forest" compatibility="9.3.001" expanded="true" height="103" name="Random Forest" width="90" x="581" y="34">
+        <parameter key="number_of_trees" value="100"/>
+        <parameter key="criterion" value="gain_ratio"/>
+        <parameter key="maximal_depth" value="10"/>
+        <parameter key="apply_pruning" value="false"/>
+        <parameter key="confidence" value="0.1"/>
+        <parameter key="apply_prepruning" value="false"/>
+        <parameter key="minimal_gain" value="0.01"/>
+        <parameter key="minimal_leaf_size" value="2"/>
+        <parameter key="minimal_size_for_split" value="4"/>
+        <parameter key="number_of_prepruning_alternatives" value="3"/>
+        <parameter key="random_splits" value="false"/>
+        <parameter key="guess_subset_ratio" value="true"/>
+        <parameter key="subset_ratio" value="0.2"/>
+        <parameter key="voting_strategy" value="confidence vote"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <parameter key="enable_parallel_execution" value="true"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (3)" width="90" x="715" y="34">
+        <parameter key="repository_entry" value="../results/SV_RM_RF_model"/>
+      </operator>
+      <connect from_op="Retrieve Pulsar_data" from_port="output" to_op="Split Data" to_port="example set"/>
+      <connect from_op="Split Data" from_port="partition 1" to_op="Multiply" to_port="input"/>
+      <connect from_op="Split Data" from_port="partition 2" to_op="Store (4)" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Random Forest" to_port="training set"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Py_RF" to_port="input 1"/>
+      <connect from_op="Py_RF" from_port="output 1" to_op="Store" to_port="input"/>
+      <connect from_op="Read CSV" from_port="output" to_op="Set Role" to_port="example set input"/>
+      <connect from_op="Set Role" from_port="example set output" to_op="Split Data (2)" to_port="example set"/>
+      <connect from_op="Split Data (2)" from_port="partition 1" to_op="R_RF" to_port="input 1"/>
+      <connect from_op="Split Data (2)" from_port="partition 2" to_op="Store (5)" to_port="input"/>
+      <connect from_op="R_RF" from_port="output 1" to_op="Store (2)" to_port="input"/>
+      <connect from_op="Random Forest" from_port="model" to_op="Store (3)" to_port="input"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+    </process>
+  </operator>
+</process>

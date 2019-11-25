@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.3.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.3.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve Split_Val_RF_model" width="90" x="581" y="34">
+        <parameter key="repository_entry" value="../../３回目/results/Split_Val_RF_model"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve SV_Py_RF_model" width="90" x="581" y="187">
+        <parameter key="repository_entry" value="../results/SV_Py_RF_model"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve SV_R_RF_model" width="90" x="581" y="391">
+        <parameter key="repository_entry" value="../results/SV_R_RF_model"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve SV_0.3_data_for_RM_Py" width="90" x="112" y="187">
+        <parameter key="repository_entry" value="../results/SV_0.3_data_for_RM_Py"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.3.001" expanded="true" height="103" name="Multiply" width="90" x="246" y="187"/>
+      <operator activated="true" class="python_scripting:execute_python" compatibility="9.3.000" expanded="true" height="124" name="Apply Py Model Binominal" width="90" x="782" y="238">
+        <parameter key="script" value="import pandas&#10;&#10;# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;def rm_main(data):&#10;    print('Hello, world!')&#10;    # output can be found in Log View&#10;    print(type(data))&#10;&#10;    #your code goes here&#10;&#10;    #for example:&#10;    data2 = pandas.DataFrame([3,5,77,8])&#10;&#10;    # connect 2 output ports to see the results&#10;    return data, data2"/>
+        <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\Python_scripts\Apply_Py_Model_Binominal.ipynb"/>
+        <parameter key="notebook_cell_tag_filter" value=""/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+      </operator>
+      <operator activated="true" class="performance_binominal_classification" compatibility="9.3.001" expanded="true" height="82" name="Py_Performance" width="90" x="916" y="238">
+        <parameter key="manually_set_positive_class" value="false"/>
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="AUC (optimistic)" value="true"/>
+        <parameter key="AUC" value="true"/>
+        <parameter key="AUC (pessimistic)" value="false"/>
+        <parameter key="precision" value="true"/>
+        <parameter key="recall" value="true"/>
+        <parameter key="lift" value="true"/>
+        <parameter key="fallout" value="true"/>
+        <parameter key="f_measure" value="true"/>
+        <parameter key="false_positive" value="true"/>
+        <parameter key="false_negative" value="true"/>
+        <parameter key="true_positive" value="true"/>
+        <parameter key="true_negative" value="true"/>
+        <parameter key="sensitivity" value="true"/>
+        <parameter key="specificity" value="true"/>
+        <parameter key="youden" value="true"/>
+        <parameter key="positive_predictive_value" value="true"/>
+        <parameter key="negative_predictive_value" value="true"/>
+        <parameter key="psep" value="true"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="9.3.001" expanded="true" height="82" name="Apply Model" width="90" x="782" y="85">
+        <list key="application_parameters"/>
+        <parameter key="create_view" value="false"/>
+      </operator>
+      <operator activated="true" class="performance_classification" compatibility="9.3.001" expanded="true" height="82" name="RM_Performance" width="90" x="916" y="85">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="false"/>
+        <parameter key="kappa" value="false"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.3.001" expanded="true" height="68" name="Retrieve SV_0.3_data_for_R" width="90" x="380" y="493">
+        <parameter key="repository_entry" value="../results/SV_0.3_data_for_R"/>
+      </operator>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="124" name="Apply R Model" origin="GENERATED_TUTORIAL" width="90" x="782" y="442">
+        <parameter key="script" value="## load the trained model and apply it on the test data&#10;&#10;rm_main = function(model, data)&#10;{&#10; &#10;   # apply the model and build a prediction&#10;   result &lt;- predict(model, data)&#10;&#10;   # add the prediction to the example set&#10;   data$prediction &lt;- result&#10;   &#10;   # update the meta data&#10;   metaData$data$prediction &lt;&lt;- list(type=&quot;polinominal&quot;, role=&quot;prediction&quot;)&#10;   metaData$data$target$type &lt;&lt;- &quot;polynominal&quot;&#10;&#10;   return(data)&#10;&#10;}&#10;"/>
+      </operator>
+      <operator activated="true" class="performance_classification" compatibility="9.3.001" expanded="true" height="82" name="R_Performance" width="90" x="916" y="442">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <connect from_op="Retrieve Split_Val_RF_model" from_port="output" to_op="Apply Model" to_port="model"/>
+      <connect from_op="Retrieve SV_Py_RF_model" from_port="output" to_op="Apply Py Model Binominal" to_port="input 1"/>
+      <connect from_op="Retrieve SV_R_RF_model" from_port="output" to_op="Apply R Model" to_port="input 1"/>
+      <connect from_op="Retrieve SV_0.3_data_for_RM_Py" from_port="output" to_op="Multiply" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Apply Model" to_port="unlabelled data"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Apply Py Model Binominal" to_port="input 2"/>
+      <connect from_op="Apply Py Model Binominal" from_port="output 1" to_op="Py_Performance" to_port="labelled data"/>
+      <connect from_op="Py_Performance" from_port="performance" to_port="result 2"/>
+      <connect from_op="Apply Model" from_port="labelled data" to_op="RM_Performance" to_port="labelled data"/>
+      <connect from_op="RM_Performance" from_port="performance" to_port="result 1"/>
+      <connect from_op="Retrieve SV_0.3_data_for_R" from_port="output" to_op="Apply R Model" to_port="input 2"/>
+      <connect from_op="Apply R Model" from_port="output 1" to_op="R_Performance" to_port="labelled data"/>
+      <connect from_op="R_Performance" from_port="performance" to_port="result 3"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+    </process>
+  </operator>
+</process>

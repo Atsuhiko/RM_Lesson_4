@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.3.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.3.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_csv" compatibility="9.3.001" expanded="true" height="68" name="Read CSV" width="90" x="45" y="34">
+        <parameter key="csv_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\data\pulsar_stars_nominal.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+        <parameter key="data_management" value="auto"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.3.001" expanded="true" height="82" name="Set Role" width="90" x="45" y="187">
+        <parameter key="attribute_name" value="target_class"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="split_data" compatibility="9.3.001" expanded="true" height="103" name="Split Data" width="90" x="179" y="238">
+        <enumeration key="partitions">
+          <parameter key="ratio" value="0.7"/>
+          <parameter key="ratio" value="0.3"/>
+        </enumeration>
+        <parameter key="sampling_type" value="automatic"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.3.001" expanded="true" height="124" name="Multiply" width="90" x="313" y="187"/>
+      <operator activated="false" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="82" name="Apply R Model Binominal" origin="GENERATED_TUTORIAL" width="90" x="45" y="442">
+        <parameter key="script" value="## load the trained model and apply it on the test data&#10;&#10;rm_main = function(model, data)&#10;{&#10; &#10;   # apply the model and build a prediction&#10;   result &lt;- predict(model, data)&#10;&#10;   # add the prediction to the example set&#10;   data$prediction &lt;- result&#10;   &#10;   # update the meta data&#10;   metaData$data$prediction &lt;&lt;- list(type=&quot;polinominal&quot;, role=&quot;prediction&quot;)&#10;   metaData$data$target$type &lt;&lt;- &quot;polynominal&quot;&#10;&#10;   return(data)&#10;&#10;}&#10;"/>
+        <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\R_scripts\Apply_R_Model_Binominal.r"/>
+      </operator>
+      <operator activated="false" class="performance_binominal_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance Binominal" width="90" x="45" y="340">
+        <parameter key="manually_set_positive_class" value="false"/>
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="AUC (optimistic)" value="false"/>
+        <parameter key="AUC" value="true"/>
+        <parameter key="AUC (pessimistic)" value="false"/>
+        <parameter key="precision" value="true"/>
+        <parameter key="recall" value="true"/>
+        <parameter key="lift" value="false"/>
+        <parameter key="fallout" value="false"/>
+        <parameter key="f_measure" value="true"/>
+        <parameter key="false_positive" value="false"/>
+        <parameter key="false_negative" value="false"/>
+        <parameter key="true_positive" value="false"/>
+        <parameter key="true_negative" value="false"/>
+        <parameter key="sensitivity" value="true"/>
+        <parameter key="specificity" value="true"/>
+        <parameter key="youden" value="false"/>
+        <parameter key="positive_predictive_value" value="false"/>
+        <parameter key="negative_predictive_value" value="false"/>
+        <parameter key="psep" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="103" name="RRF" origin="GENERATED_TUTORIAL" width="90" x="514" y="442">
+        <parameter key="script" value="# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;rm_main = function(data)&#10;{&#10;&#10;options(repos=&quot;https://cran.ism.ac.jp/&quot;) #install.packages()のダウンロード先指定&#10;install.packages(&quot;caret&quot;)&#10;install.packages(&quot;randomForest&quot;)&#10;install.packages(&quot;RRF&quot;)&#10;library(caret)&#10;library(randomForest)&#10;library(RRF)&#10;&#10;# 交差検証10回 &#10;fitControl &lt;- trainControl(method = &quot;repeatedcv&quot;,&#10;                           number = 10,&#10;                           repeats = 10,&#10;                           selectionFunction = &quot;best&quot;) # repeated ten times&#10;&#10;# fit a random forest model (using ranger/交差検証10回して最適化)&#10;rf_fit &lt;- train(as.factor(target_class) ~ ., #関数as.factor( )を使うことによって，因子型に変換&#10;                data = data, &#10;                method = &quot;RRF&quot;,&#10;                trControl = fitControl)&#10;&#10;return(rf_fit)&#10;}"/>
+        <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\R_scripts\RRF.r"/>
+      </operator>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="103" name="ranger" origin="GENERATED_TUTORIAL" width="90" x="514" y="238">
+        <parameter key="script" value="# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;rm_main = function(data)&#10;{&#10;&#10;options(repos=&quot;https://cran.ism.ac.jp/&quot;) #install.packages()のダウンロード先指定&#10;install.packages(&quot;caret&quot;)&#10;install.packages(&quot;ranger&quot;)&#10;install.packages(&quot;e1071&quot;)&#10;install.packages(&quot;dplyr&quot;)&#10;library(caret)&#10;library(ranger)&#10;library(e1071)&#10;library(dplyr)&#10;&#10;# 交差検証10回 &#10;fitControl &lt;- trainControl(method = &quot;repeatedcv&quot;,&#10;                           number = 10,&#10;                           repeats = 10,&#10;                           selectionFunction = &quot;best&quot;) # repeated ten times&#10;&#10;# fit a random forest model (using ranger/交差検証10回して最適化)&#10;rf_fit &lt;- train(as.factor(target_class) ~ ., #関数as.factor( )を使うことによって，因子型に変換&#10;                data = data, &#10;                method = &quot;ranger&quot;,&#10;                trControl = fitControl)&#10;&#10;return(rf_fit)&#10;}"/>
+        <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\R_scripts\ranger.r"/>
+      </operator>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="103" name="RF" origin="GENERATED_TUTORIAL" width="90" x="514" y="34">
+        <parameter key="script" value="# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;rm_main = function(data)&#10;{&#10;&#10;options(repos=&quot;https://cran.ism.ac.jp/&quot;) #install.packages()のダウンロード先指定&#10;install.packages(&quot;caret&quot;)&#10;install.packages(&quot;randomForest&quot;)&#10;library(caret)&#10;library(randomForest)&#10;&#10;# 交差検証10回 &#10;fitControl &lt;- trainControl(method = &quot;repeatedcv&quot;,&#10;                           number = 10,&#10;                           repeats = 10,&#10;                           selectionFunction = &quot;best&quot;) # repeated ten times&#10;&#10;# fit a random forest model (using rf/交差検証10回して最適化)&#10;rf_fit &lt;- train(as.factor(target_class) ~ ., #関数as.factor( )を使うことによって，因子型に変換&#10;                data = data, &#10;                method = &quot;rf&quot;,&#10;                trControl = fitControl)&#10;&#10;return(rf_fit)&#10;}"/>
+        <parameter key="script_file" value="C:\Users\301518\Desktop\ノンコーティングで機械学習勉強会\第４回\R_scripts\RF.r"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="9.3.001" expanded="true" height="124" name="Multiply (2)" width="90" x="313" y="340"/>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="124" name="Apply R Model (3)" origin="GENERATED_TUTORIAL" width="90" x="715" y="493">
+        <parameter key="script" value="## load the trained model and apply it on the test data&#10;&#10;rm_main = function(model, data)&#10;{&#10; &#10;   # apply the model and build a prediction&#10;   result &lt;- predict(model, data)&#10;&#10;   # add the prediction to the example set&#10;   data$prediction &lt;- result&#10;   &#10;   # update the meta data&#10;   metaData$data$prediction &lt;&lt;- list(type=&quot;polinominal&quot;, role=&quot;prediction&quot;)&#10;   metaData$data$target$type &lt;&lt;- &quot;polynominal&quot;&#10;&#10;   return(data)&#10;&#10;}&#10;"/>
+      </operator>
+      <operator activated="true" class="performance_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance (3)" width="90" x="849" y="493">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (3)" width="90" x="983" y="493">
+        <parameter key="repository_entry" value="../results/SV_R_RRF_Performance"/>
+      </operator>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="124" name="Apply R Model (2)" origin="GENERATED_TUTORIAL" width="90" x="715" y="289">
+        <parameter key="script" value="## load the trained model and apply it on the test data&#10;&#10;rm_main = function(model, data)&#10;{&#10; &#10;   # apply the model and build a prediction&#10;   result &lt;- predict(model, data)&#10;&#10;   # add the prediction to the example set&#10;   data$prediction &lt;- result&#10;   &#10;   # update the meta data&#10;   metaData$data$prediction &lt;&lt;- list(type=&quot;polinominal&quot;, role=&quot;prediction&quot;)&#10;   metaData$data$target$type &lt;&lt;- &quot;polynominal&quot;&#10;&#10;   return(data)&#10;&#10;}&#10;"/>
+      </operator>
+      <operator activated="true" class="performance_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance (2)" width="90" x="849" y="289">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store (2)" width="90" x="983" y="289">
+        <parameter key="repository_entry" value="../results/SV_R_ranger_Performance"/>
+      </operator>
+      <operator activated="true" class="r_scripting:execute_r" compatibility="9.1.000" expanded="true" height="124" name="Apply R Model" origin="GENERATED_TUTORIAL" width="90" x="715" y="85">
+        <parameter key="script" value="## load the trained model and apply it on the test data&#10;&#10;rm_main = function(model, data)&#10;{&#10; &#10;   # apply the model and build a prediction&#10;   result &lt;- predict(model, data)&#10;&#10;   # add the prediction to the example set&#10;   data$prediction &lt;- result&#10;   &#10;   # update the meta data&#10;   metaData$data$prediction &lt;&lt;- list(type=&quot;polinominal&quot;, role=&quot;prediction&quot;)&#10;   metaData$data$target$type &lt;&lt;- &quot;polynominal&quot;&#10;&#10;   return(data)&#10;&#10;}&#10;"/>
+      </operator>
+      <operator activated="true" class="performance_classification" compatibility="9.3.001" expanded="true" height="82" name="Performance" width="90" x="849" y="85">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="true"/>
+        <parameter key="kappa" value="true"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.3.001" expanded="true" height="68" name="Store" width="90" x="983" y="85">
+        <parameter key="repository_entry" value="../results/SV_R_RF_Performance"/>
+      </operator>
+      <connect from_op="Read CSV" from_port="output" to_op="Set Role" to_port="example set input"/>
+      <connect from_op="Set Role" from_port="example set output" to_op="Split Data" to_port="example set"/>
+      <connect from_op="Split Data" from_port="partition 1" to_op="Multiply" to_port="input"/>
+      <connect from_op="Split Data" from_port="partition 2" to_op="Multiply (2)" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="RF" to_port="input 1"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="ranger" to_port="input 1"/>
+      <connect from_op="Multiply" from_port="output 3" to_op="RRF" to_port="input 1"/>
+      <connect from_op="RRF" from_port="output 1" to_op="Apply R Model (3)" to_port="input 1"/>
+      <connect from_op="ranger" from_port="output 1" to_op="Apply R Model (2)" to_port="input 1"/>
+      <connect from_op="RF" from_port="output 1" to_op="Apply R Model" to_port="input 1"/>
+      <connect from_op="Multiply (2)" from_port="output 1" to_op="Apply R Model" to_port="input 2"/>
+      <connect from_op="Multiply (2)" from_port="output 2" to_op="Apply R Model (2)" to_port="input 2"/>
+      <connect from_op="Multiply (2)" from_port="output 3" to_op="Apply R Model (3)" to_port="input 2"/>
+      <connect from_op="Apply R Model (3)" from_port="output 1" to_op="Performance (3)" to_port="labelled data"/>
+      <connect from_op="Performance (3)" from_port="performance" to_op="Store (3)" to_port="input"/>
+      <connect from_op="Store (3)" from_port="through" to_port="result 3"/>
+      <connect from_op="Apply R Model (2)" from_port="output 1" to_op="Performance (2)" to_port="labelled data"/>
+      <connect from_op="Performance (2)" from_port="performance" to_op="Store (2)" to_port="input"/>
+      <connect from_op="Store (2)" from_port="through" to_port="result 2"/>
+      <connect from_op="Apply R Model" from_port="output 1" to_op="Performance" to_port="labelled data"/>
+      <connect from_op="Performance" from_port="performance" to_op="Store" to_port="input"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+      <description align="left" color="yellow" colored="false" height="60" resized="true" width="105" x="165" y="169">&amp;#23398;&amp;#32722;&amp;#29992;&amp;#65306;0.7&lt;br&gt;&amp;#12486;&amp;#12473;&amp;#12488;&amp;#29992;&amp;#65306;0.3</description>
+      <description align="left" color="yellow" colored="false" height="103" resized="true" width="269" x="30" y="544">Binominal &amp;#12487;&amp;#12540;&amp;#12479;&amp;#12398;label&amp;#12392;prediction&amp;#12398;&amp;#20516;&amp;#12364;&amp;#21512;&amp;#12431;&amp;#12394;&amp;#12356;&amp;#12383;&amp;#12414;&amp;#12289;&amp;#12456;&amp;#12521;&amp;#12540;&amp;#12364;&amp;#20986;&amp;#12427;&amp;#12290;&lt;br&gt;taget_class (labe): false, true&lt;br&gt;prediction(ptediction); FALSE, TRUE&lt;br&gt;Polymoninal &amp;#12391;&amp;#12399;&amp;#12456;&amp;#12521;&amp;#12540;&amp;#12399;&amp;#36215;&amp;#12365;&amp;#12394;&amp;#12363;&amp;#12387;&amp;#12383;&amp;#12290;&lt;br&gt;</description>
+      <description align="left" color="yellow" colored="false" height="59" resized="false" width="121" x="163" y="53">CSV&amp;#12398;&amp;#30446;&amp;#30340;&amp;#22793;&amp;#25968;&amp;#12434;nominal&amp;#12395;</description>
+    </process>
+  </operator>
+</process>
